@@ -1,15 +1,31 @@
 const Product = require("../models/product");
 const User = require("../models/user");
+const Imagep = require("../models/imagep");
 
-exports.getProducts = (req, res, next) => {
-  req.user
-    .getProducts()
-    .then((products) => {
-      res.status(200).json({ data: products });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.getProducts = async (req, res, next) => {
+  const currentPage = parseInt(req.query.currentPage) || 0;
+  const perPage = parseInt(req.query.perPage) || 0;
+  console.log("limit", perPage);
+
+  // build the query
+  var query = {
+    include: [{ model: Imagep, required: false }],
+  };
+  if (perPage) {
+    query.limit = perPage;
+  }
+  if (currentPage) {
+    query.offset = currentPage * perPage;
+  }
+
+  try {
+    const products = await Product.findAndCountAll(query);
+    res
+      .status(200)
+      .json({ meta: { total: products.count }, products: products.rows });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 exports.getProduct = (req, res, next) => {

@@ -24,6 +24,7 @@ const orderRouter = require("./routes/order");
 const authRouter = require("./routes/auth");
 const adminImageRoutes = require("./routes/admin-image");
 const heroRoutes = require("./routes/hero");
+const productRouter = require('./routes/product');
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use("/shop", orderRouter);
 app.use("/auth", authRouter);
 app.use("/admin", adminImageRoutes);
 app.use("/admin", heroRoutes);
+app.use('/product', productRouter);
 
 User.hasMany(Product, { foreignKey: { name: "creator", allowNull: false } });
 User.hasOne(Cart);
