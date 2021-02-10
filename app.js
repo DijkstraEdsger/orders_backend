@@ -70,7 +70,8 @@ sequelize
   // .sync({ force: true })
   .sync()
   .then(() => {
-    app.listen(8080);
+    app.listen(3000);
+    console.log('listen');
     // return User.create({ name: "Humberto", email: "test@test.com" });
   })
   // .then((user) => {
