@@ -15,6 +15,7 @@ const Imagep = require("./models/imagep");
 const Image = require("./models/image");
 const Category = require("./models/category");
 const Hero = require("./models/hero");
+const Contact = require("./models/contact");
 
 const adminProductRoutes = require("./routes/admin-product");
 const adminUserRoutes = require("./routes/admin-user");
@@ -28,6 +29,7 @@ const heroRoutes = require("./routes/hero");
 const productRouter = require("./routes/product");
 const adminCategoryRouter = require("./routes/admin-category");
 const categoryRouter = require("./routes/category");
+const contactRouter = require("./routes/contact");
 
 const app = express();
 
@@ -50,6 +52,33 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 // app.use(express.static(__dirname+'/public'));
 // app.use(multer({ dest: "public/images" }).single("file"));
 
+
+app.get("/event", (req, res, next) => {
+  let c = 0;
+  res.setHeader("Content-Type", "text/event-stream");
+  res.write("event: start\n");
+  res.write("data: Data startt\n\n");
+
+  const stream = () => {
+    console.log(c);
+    c += 1;
+    if (c >= 30) {
+      res.write("event: end\n");
+      res.write("data: Data end\n\n");
+      return;
+    }
+
+    res.write("event: loading\n");
+    res.write("data: " + c + "\n\n");
+
+    setTimeout(stream, 500);
+  }
+  
+  stream();     
+
+  next();
+})
+
 app.use("/admin", adminProductRoutes);
 app.use("/admin", adminUserRoutes);
 app.use("/admin", adminCartRoutes);
@@ -62,6 +91,7 @@ app.use("/admin", heroRoutes);
 app.use("/product", productRouter);
 app.use("/admin", adminCategoryRouter);
 app.use("/category", categoryRouter);
+app.use('/contact', contactRouter);
 
 User.hasMany(Product, { foreignKey: { name: "creator", allowNull: false } });
 User.hasOne(Cart);
